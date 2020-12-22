@@ -17,5 +17,8 @@ INTERNAL_IPS = [
     '127.0.0.1'
 ]
 
+STATICFILES_DIRS = (
+    path.join(BASE_DIR, '../../client/dist'),  # noqa
+)
+
 WEBPACK_LOADER['DEFAULT']['CACHE'] = False  # noqa
-WEBPACK_LOADER['DEFAULT']['STATS_FILE'] = path.join(BASE_DIR, '../../client/dist/webpack-stats.json')  # noqa

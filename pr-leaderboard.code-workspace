@@ -47,5 +47,23 @@
       "django-html": "html"
     },
     "python.linting.pycodestyleArgs": ["--max-line-length=100"]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "compounds": [
+      {
+        "name": "Compound",
+        "configurations": ["Launch Chrome", "Launch Client", "Launch Python"]
+      }
+    ],
+    "configurations": [
+      {
+        "name": "Launch Chrome",
+        "request": "launch",
+        "type": "pwa-chrome",
+        "url": "http://localhost:3000/",
+        "webRoot": "${workspaceFolder:client}"
+      }
+    ]
   }
 }

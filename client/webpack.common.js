@@ -6,8 +6,6 @@ const BundleTracker = require('webpack-bundle-tracker');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-const bundlePath = 'bundles/';
-
 const config = {
     entry: {
         site: path.resolve(__dirname, 'src/ts/site.ts'),
@@ -16,7 +14,15 @@ const config = {
         rules: [
             {
                 test: /\.ts$/,
-                use: ['babel-loader', 'ts-loader'],
+                use: [
+                    'babel-loader',
+                    // we need to enable sourceMaps in the typescript compiler, and then load them
+                    // directly prior to processing with babel, because the tsc compiler will remove
+                    // empty lines, which won't be reflected in the source map if it is generated outside
+                    // of tsc
+                    'source-map-loader',
+                    'ts-loader',
+                ],
                 exclude: /node_modules/,
             },
             {
@@ -32,13 +38,13 @@ const config = {
     output: {
         filename: '[name].[fullhash].js',
         path: path.resolve(__dirname, 'dist/bundles/'),
-        publicPath: '/' + bundlePath,
+        publicPath: '/static/bundles/',
     },
     plugins: [
         new CleanWebpackPlugin(),
         new MiniCssExtractPlugin({ filename: '[name].[fullhash].css' }),
-        new ESLintPlugin(),
-        new BundleTracker({ filename: 'webpack-stats.json' }),
+        new ESLintPlugin({ extensions: ['ts'] }),
+        new BundleTracker({ filename: '../leaderboard/leaderboard/webpack-stats.json' }),
     ],
 };
 
