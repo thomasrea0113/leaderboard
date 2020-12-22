@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  app:
+    build:
+      args:
+        ENV: development
+        COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+    ports:
+      - 9000:9000
+    environment:
+      - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
+      - TEST=hello
+    volumes:
+      - ../:/workspace:cached
+
+      # See https://aka.ms/vscode-remote/samples/docker-from-docker-compose for details.
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: /bin/sh -c "while sleep 1000; do :; done"

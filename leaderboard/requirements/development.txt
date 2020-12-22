@@ -1,0 +1,6 @@
+-r base.txt
+
+autopep8
+pycodestyle
+prospector
+django-debug-toolbar
