@@ -13,21 +13,16 @@ User = get_user_model()
 class WeightClass(models.Model):
     gender = models.CharField(
         max_length=1, blank=True, choices=Genders.choices)
-    lower_bound = models.PositiveIntegerField(default=0)
     upper_bound = models.PositiveIntegerField(default=0)
 
     def __str__(self) -> str:
-        return (f'{self.lower_bound} - {self.upper_bound}' +
-                (f' ({Genders(self.gender).label})' if self.gender else ''))
+        return (f'{self.upper_bound}' + (f' ({Genders(self.gender).label})' if self.gender else ''))
 
     class Meta:
         constraints = [
-            models.CheckConstraint(
-                check=Q(lower_bound__lt=F('upper_bound')) | Q(upper_bound=0),
-                name='weight_range'),
             models.UniqueConstraint(
-                fields=['lower_bound', 'upper_bound', 'gender'],
-                name='unique_weight_range')
+                fields=['upper_bound', 'gender'],
+                name='unique_weight_class')
         ]
 
 
