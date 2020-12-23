@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.db.models import UniqueConstraint
 from django.db.models.expressions import F
 from django.db.models.query_utils import Q
 from django.utils.translation import gettext_lazy as _
@@ -65,13 +66,21 @@ class BoardDefinition(models.Model):
 
 
 class Board(models.Model):
-    name = models.CharField(max_length=100, null=True, unique=True)
     board_definition = models.ForeignKey(
         BoardDefinition, on_delete=models.PROTECT)
     division = models.ForeignKey(
-        AgeDivision, on_delete=models.CASCADE, null=True, blank=True)
+        AgeDivision, on_delete=models.PROTECT)
     weight_class = models.ForeignKey(
-        WeightClass, on_delete=models.CASCADE, null=True, blank=True)
+        WeightClass, on_delete=models.PROTECT)
+
+    def __str__(self) -> str:
+        return f'{self.board_definition.name} (Division: {self.division}, Weight Class: {self.weight_class})'
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=['board_definition', 'division', 'weight_class'], name="unique_board")
+        ]
 
 
 class Score(models.Model):

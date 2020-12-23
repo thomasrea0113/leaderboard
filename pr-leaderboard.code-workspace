@@ -11,7 +11,11 @@
     }
   ],
   "extensions": {
-    "recommendations": ["ms-azuretools.vscode-docker", "redhat.vscode-yaml"]
+    "recommendations": [
+      "ms-azuretools.vscode-docker",
+      "redhat.vscode-yaml",
+      "gruntfuggly.todo-tree"
+    ]
   },
   "settings": {
     "python.languageServer": "Pylance",
