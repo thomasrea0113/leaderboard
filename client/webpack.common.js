@@ -9,6 +9,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const config = {
     entry: {
         site: path.resolve(__dirname, 'src/ts/site.ts'),
+        select2: path.resolve(__dirname, 'src/ts/select2.ts'),
     },
     module: {
         rules: [
@@ -28,7 +29,10 @@ const config = {
             {
                 test: /\.scss$/,
                 use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
-                exclude: /node_modules/,
+            },
+            {
+                test: /\.css$/,
+                use: [MiniCssExtractPlugin.loader, 'css-loader'],
             },
         ],
     },

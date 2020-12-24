@@ -35,6 +35,9 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.divisions',
 
+    # must come after out custom apps, so that we can override the default templates
+    'django.forms',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,6 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'webpack_loader'
 ]
+
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -116,7 +116,8 @@ you select 2 board definitions, 1 weight class, and 2 divisions, 2x2x1=4 boards 
             opts: 'Options[models.Board]' = self.model._meta
             context['adminform'].fieldsets[0][1]['description'] = self.add_many_help
             context.update({
-                'title': f'Add Many {opts.verbose_name_plural}'
+                'title': f'Add Many {opts.verbose_name_plural}',
+                'has_multiselect': True,
             })
         return super().render_change_form(request, context, add, change, form_url, obj)
 
