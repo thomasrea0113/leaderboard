@@ -1,0 +1,1 @@
+[{"model": "divisions.boarddefinition", "pk": 1, "fields": {"name": "Bench", "unit_type": "W", "description": null}}, {"model": "divisions.boarddefinition", "pk": 2, "fields": {"name": "Squat", "unit_type": "W", "description": null}}, {"model": "divisions.boarddefinition", "pk": 3, "fields": {"name": "Deadlift", "unit_type": "W", "description": null}}]

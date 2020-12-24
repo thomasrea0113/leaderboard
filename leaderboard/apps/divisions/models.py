@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models import UniqueConstraint
@@ -9,19 +10,33 @@ from apps.users.models import Genders
 
 User = get_user_model()
 
+if TYPE_CHECKING:
+    from typing import List
+
 
 class WeightClass(models.Model):
     gender = models.CharField(
         max_length=1, blank=True, choices=Genders.choices)
     upper_bound = models.PositiveIntegerField(default=0)
+    unbound = models.BooleanField(blank=True, default=False,
+                                  help_text=_('''Indicates that this weight class
+has no upper bound. Instead, you must weight at least the
+amount specified by the upper bound field.'''))
 
     def __str__(self) -> str:
-        return (f'{self.upper_bound}' + (f' ({Genders(self.gender).label})' if self.gender else ''))
+        parts: 'List[str]' = []
+        if self.gender:
+            parts.append(str(Genders(self.gender).label))
+        if self.unbound:
+            parts.append('unbound')
+        parts_str = ', '.join(parts)
+        addon = f' ({parts_str})' if parts else ''
+        return f'{self.upper_bound}{addon}'
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['upper_bound', 'gender'],
+                fields=['upper_bound', 'gender', 'unbound'],
                 name='unique_weight_class')
         ]
 
@@ -69,7 +84,8 @@ class Board(models.Model):
         WeightClass, on_delete=models.PROTECT)
 
     def __str__(self) -> str:
-        return f'{self.board_definition.name} (Division: {self.division}, Weight Class: {self.weight_class})'
+        return (f'{self.board_definition.name} (Division: {self.division}' +
+                f', Weight Class: {self.weight_class})')
 
     class Meta:
         constraints = [

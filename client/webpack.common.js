@@ -9,6 +9,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const config = {
     entry: {
         site: path.resolve(__dirname, 'src/ts/site.ts'),
+        'bootstrap-modal': path.resolve(__dirname, 'src/ts/bootstrap-modal.ts'),
         select2: path.resolve(__dirname, 'src/ts/select2.ts'),
     },
     module: {
