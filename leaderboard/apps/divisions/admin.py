@@ -31,6 +31,11 @@ class BoardDefinitionAdmin(admin.ModelAdmin):
 
 
 class AddManyBoardsForm(ModelForm):
+    # base_fields will be autopopulated with the model fields. We need to remove those
+    # since we're redefining them below. For other use cases, we may only want to remove
+    # the fields that we redefine
+    base_fields = []
+
     board_definitions = ModelMultipleChoiceField(
         queryset=models.BoardDefinition.objects.all())
     divisions = ModelMultipleChoiceField(
@@ -38,25 +43,9 @@ class AddManyBoardsForm(ModelForm):
     weight_classes = ModelMultipleChoiceField(
         queryset=models.WeightClass.objects.all())
 
-    instance: 'models.Board'
-
     class Meta:
         model = models.Board
         fields = []
-
-    def clean(self):
-        cleaned = super().clean()
-        # TODO find a better way to do this... likely involving a custom implementation of ModelForm
-        # because we hacked a ModelForm to use it to generate multiple objects, the model fields
-        # aren't set. Because board_defnition is required, we must manually set it to the first
-        # selected board defition. The instance never actually get's saved,
-        self.instance.board_definition = self.cleaned_data.get(
-            'board_definitions', [None])[0]
-        self.instance.division = self.cleaned_data.get(
-            'divisions', [None])[0]
-        self.instance.weight_class = self.cleaned_data.get(
-            'weight_classes', [None])[0]
-        return cleaned
 
     def save(self, commit: 'bool' = ...) -> 'List[models.Board]':
         definitions: 'QuerySet[models.BoardDefinition]' = self.cleaned_data['board_definitions']
@@ -71,10 +60,8 @@ class AddManyBoardsForm(ModelForm):
             board.weight_class = weight_class
             boards.append(board)
 
-        created: 'List[models.Board]' = models.Board.objects.bulk_create(
+        return models.Board.objects.bulk_create(
             boards, ignore_conflicts=True)
-
-        return created
 
 
 @admin.register(models.Board)
@@ -103,7 +90,7 @@ you select 2 board definitions, 1 weight class, and 2 divisions, 2x2x1=4 boards 
     def get_form(self, request: 'HttpRequest',
                  obj: 'Optional[models.Board]' = ...,
                  change: 'bool' = ..., **kwargs: 'Any'):
-        if self.is_custom_route(request):
+        if self.is_route(request, 'add-many'):
             return AddManyBoardsForm
         return super().get_form(request, obj=obj, change=change, **kwargs)
 
