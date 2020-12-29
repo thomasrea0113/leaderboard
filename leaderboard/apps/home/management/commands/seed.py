@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
         try:
             manager.create_superuser(
-                username='thomasrea0113', email=None, password='Password123')
+                username='thomasrea0113', email='thomasrea0113@gmail.com', password='Password123')
         except IntegrityError:
             pass
 

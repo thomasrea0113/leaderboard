@@ -11,7 +11,7 @@ from apps.users.models import Genders
 User = get_user_model()
 
 if TYPE_CHECKING:
-    from typing import List
+    from typing import Any
 
 
 class WeightClass(models.Model):
@@ -89,12 +89,16 @@ class Board(models.Model):
 
 
 class Score(models.Model):
+    id: 'Any'
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
-    value = models.DecimalField(max_digits=4, decimal_places=2)
+    value = models.DecimalField(max_digits=6, decimal_places=2)
+
+    approved = models.BooleanField(blank=True, default=False)
 
     def __str__(self) -> str:
-        return f'{self.value} {self.board.unit_type}'
+        return f'{self.value} {self.board.board_definition.unit_type}'
 
     class Meta:
         constraints = [

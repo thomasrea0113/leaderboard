@@ -11,6 +11,14 @@
       "program": "${workspaceFolder}/manage.py",
       "args": ["runserver", "0.0.0.0:3000"],
       "django": true
+    },
+    {
+      "name": "seed",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/manage.py",
+      "args": ["seed_dev"],
+      "django": true
     }
   ]
 }

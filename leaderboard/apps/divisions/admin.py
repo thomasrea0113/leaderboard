@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from django.db.models.query import QuerySet
     from django.http import HttpRequest
     from django.urls.resolvers import URLPattern
+    from django.template.response import TemplateResponse
 
 
 @admin.register(models.AgeDivision)
@@ -134,3 +135,28 @@ you select 2 board definitions, 1 weight class, and 2 divisions, 2x2x1=4 boards 
 @admin.register(models.WeightClass)
 class WeightClassAdmin(admin.ModelAdmin):
     pass
+
+
+def approve_score(_: 'ScoreAdmin', _2: 'HttpRequest',
+                  queryset: 'QuerySet[models.Score]'):
+    queryset.update(approved=True)
+
+
+approve_score.short_description = 'Approve selected scores'
+
+
+@admin.register(models.Score)
+class ScoreAdmin(admin.ModelAdmin):
+    actions = [approve_score]
+    list_display = ['board', 'user', 'value', 'approved']
+    list_filter = (
+        ('board', admin.RelatedOnlyFieldListFilter),
+        ('user', admin.RelatedOnlyFieldListFilter),
+        'approved'
+    )
+
+    def changelist_view(self, request: 'HttpRequest',
+                        extra_context: 'Optional[Dict[str, Any]]' = None) -> 'TemplateResponse':
+        ctx: 'Dict[str, Any]' = extra_context or {}
+        ctx.update({'has_multiselect': True})
+        return super().changelist_view(request, extra_context=ctx)

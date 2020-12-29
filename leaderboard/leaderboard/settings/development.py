@@ -13,9 +13,14 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware'
 ] + MIDDLEWARE  # noqa
 
-INTERNAL_IPS = [
-    '127.0.0.1'
-]
+
+def custom_show_toolbar(request):
+    return True  # Always show toolbar in development, regardless of host
+
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
+}
 
 STATICFILES_DIRS = (
     path.join(BASE_DIR, '../../client/dist'),  # noqa
