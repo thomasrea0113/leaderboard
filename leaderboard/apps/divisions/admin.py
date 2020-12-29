@@ -9,6 +9,7 @@ from django.urls import path
 from django.shortcuts import redirect
 
 from . import models
+from apps.home.mixins import AdminChangeLinksMixin
 
 resolve = get_resolver().resolve
 
@@ -146,11 +147,19 @@ approve_score.short_description = 'Approve selected scores'
 
 
 @admin.register(models.Score)
-class ScoreAdmin(admin.ModelAdmin):
+class ScoreAdmin(AdminChangeLinksMixin, admin.ModelAdmin):
     actions = [approve_score]
-    list_display = ['board', 'user', 'value', 'approved']
+
+    list_display = ['value', 'user_link',
+                    'board__board_definition_link', 'board__division_link',
+                    'board__weight_class_link', 'approved']
+    change_links = ['user', 'board__board_definition',
+                    'board__division', 'board__weight_class']
+
     list_filter = (
-        ('board', admin.RelatedOnlyFieldListFilter),
+        ('board__board_definition', admin.RelatedOnlyFieldListFilter),
+        ('board__division', admin.RelatedOnlyFieldListFilter),
+        ('board__weight_class', admin.RelatedOnlyFieldListFilter),
         ('user', admin.RelatedOnlyFieldListFilter),
         'approved'
     )

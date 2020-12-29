@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import UniqueConstraint
 from django.db.models.expressions import F
 from django.db.models.query_utils import Q
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as _
 
 from apps.users.models import Genders
 
@@ -21,8 +21,9 @@ class WeightClass(models.Model):
     upper_bound = models.PositiveIntegerField(default=0)
 
     def __str__(self) -> str:
-        gender_str = f' ({str(Genders(self.gender).label)})' if self.gender else ''
-        return f'{self.lower_bound} - {self.upper_bound}{gender_str}'
+        gender_str = f'{str(Genders(self.gender).label)}, ' if self.gender else ''
+        # TODO dynamically convert to lbs if the user prefers LBs
+        return _(f'{gender_str}{self.lower_bound} - {self.upper_bound} KGs')
 
     class Meta:
         constraints = [
@@ -41,7 +42,7 @@ class AgeDivision(models.Model):
     upper_bound = models.PositiveIntegerField(default=0)
 
     def __str__(self) -> str:
-        return f'{self.name} ({self.lower_bound} - {self.upper_bound})'
+        return _(f'{self.name}, Ages {self.lower_bound} - {self.upper_bound}')
 
     class Meta:
         constraints = [
@@ -78,8 +79,8 @@ class Board(models.Model):
         WeightClass, on_delete=models.PROTECT)
 
     def __str__(self) -> str:
-        return (f'{self.board_definition.name} (Division: {self.division}' +
-                f', Weight Class: {self.weight_class})')
+        return (f'{self.board_definition.name} ({self.division}' +
+                f', {self.weight_class})')
 
     class Meta:
         constraints = [

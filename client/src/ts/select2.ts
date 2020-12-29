@@ -27,6 +27,12 @@ import * as $ from 'jquery';
             }
         });
 
+        // clear selected
+        $('.filter-clear').on('click', () => {
+            const selects = <JQuery<HTMLSelectElement>>$('select[multiple][data-field]');
+            selects.val('').trigger('change');
+        });
+
         $('select[multiple][data-field]').each((i, elm) => {
             const $this = $(elm);
             const field = <string>$this.data('field');

@@ -3,13 +3,15 @@
 
 {% block filters %}
 {% if cl.has_filters %}
-    <div id="changelist-filter">
+    {% comment %} override width to allow filter box to expand as needed {% endcomment %}
+    <div id="changelist-filter" style="width: unset; min-width: 240px">
     <h2>{% translate 'Filter' %}</h2>
     {% if cl.has_active_filters %}<h3 id="changelist-filter-clear">
         <a href="{{ cl.clear_all_filters_qs }}">&#10006; {% translate "Clear all filters" %}</a>
     </h3>{% endif %}
     {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
-    <button class="filter-apply button">{% translate "Apply filters" %}</a></button>
+    <button class="filter-apply button default">{% translate "Apply filters" %}</a></button>
+    <button class="filter-clear button">{% translate "Clear filters" %}</a></button>
     </div>
 {% endif %}
 {% endblock %}
