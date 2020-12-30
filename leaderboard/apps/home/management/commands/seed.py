@@ -1,5 +1,3 @@
-from apps.divisions.models import AgeDivision, BoardDefinition, WeightClass
-from apps.divisions.admin import AddManyBoardsForm
 from typing import cast, TYPE_CHECKING
 
 from django.contrib.auth.base_user import AbstractBaseUser
@@ -7,6 +5,9 @@ from django.core.management import BaseCommand, call_command
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import UserManager
 from django.db.utils import IntegrityError
+
+from apps.divisions.models import AgeDivision, BoardDefinition, WeightClass
+from apps.divisions.admin.forms import AddManyBoardsForm
 
 User = get_user_model()
 

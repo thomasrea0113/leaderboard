@@ -1,8 +1,10 @@
 {
-  "python.linting.enabled": true,
+  "python.linting.enabled": false,
   "python.linting.pycodestyleEnabled": true,
   "python.linting.prospectorEnabled": true,
   "pythonTestExplorer.testFramework": "unittest",
+  // in order to disable automatic import sorting
+  // "python.formatting.autopep8Args": ["--ignore", "E402"],
   "prettier.disableLanguages": ["django-html"],
   "files.associations": {
     "**/*.html": "html",

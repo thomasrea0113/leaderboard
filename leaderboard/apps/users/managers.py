@@ -1,5 +1,5 @@
-from django.contrib.auth.models import UserManager
 from typing import TYPE_CHECKING
+from django.contrib.auth.models import UserManager
 
 UserManagerBase = UserManager
 

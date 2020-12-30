@@ -1,9 +1,11 @@
 from typing import TYPE_CHECKING, cast
 import random
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import UserManager, AbstractBaseUser
-from apps.divisions.models import Board, Score
 from django.db.utils import IntegrityError
+
+from apps.divisions.models import Board, Score
 from . import seed
 
 User = get_user_model()

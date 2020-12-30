@@ -1,7 +1,8 @@
 from django.utils.translation import gettext_lazy as _
-from apps.users.manages import AppUserManager
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
+from apps.users.managers import AppUserManager
 
 
 class Genders(models.TextChoices):

@@ -68,12 +68,14 @@ class AdminChangeLinksMixin(_Base):
         if not target_instance:
             return None
 
+        meta = target_instance._meta
+
         return get_link_field(
             reverse(
                 '{}:{}_{}_change'.format(
                     self.admin_site.name,
-                    options.get('app') or target_instance._meta.app_label,
-                    options.get('model') or target_instance._meta.model_name
+                    options.get('app') or meta.app_label,
+                    options.get('model') or meta.model_name
                 ),
                 args=[target_instance.pk]
             ),
@@ -166,10 +168,8 @@ class AdminChangeLinksMixin(_Base):
             except FieldDoesNotExist:
                 pass
             else:
-                if (
-                    hasattr(field.related_model._meta, 'ordering')
-                    and field.related_model._meta.ordering
-                ):
+                if (hasattr(field.related_model._meta, 'ordering')
+                        and field.related_model._meta.ordering):
                     func.admin_order_field = '{}__{}'.format(
                         field.name,
                         field.related_model._meta.ordering[0].replace('-', '')

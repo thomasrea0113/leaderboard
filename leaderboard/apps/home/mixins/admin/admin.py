@@ -52,9 +52,11 @@ class CustomActionFormMixin(_Base):
 
         return None
 
+    # pylint: disable=no-self-use
     def get_route_name(self, request: 'HttpRequest') -> 'Optional[str]':
         return resolve(request.path_info).url_name
 
+    # pylint: disable=no-self-use
     def get_page_context(self, options: 'CustomAdminPage') -> 'Dict[str, Any]':
         return options.get('context', {})
 
@@ -103,6 +105,7 @@ class CustomActionFormMixin(_Base):
 
         return custom_view
 
+    # pylint: disable=unused-argument
     def save_custom_form(self, request: 'HttpRequest', form: 'ModelForm'):
         return form.save()
 

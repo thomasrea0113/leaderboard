@@ -1,21 +1,22 @@
-from apps.divisions.admin.actions import approve_score
-from apps.home.mixins.admin.admin import CustomActionFormMixin
 from typing import TYPE_CHECKING
+
 from django.urls.resolvers import get_resolver
 from django.contrib import admin
 from django.forms import ModelForm
 
+from apps.divisions.admin.actions import approve_score
+from apps.home.mixins.admin.admin import CustomActionFormMixin
+from apps.home.mixins.admin import AdminChangeLinksMixin
+
 from .. import models
 from . import forms
 
-from apps.home.mixins.admin import AdminChangeLinksMixin
 
 resolve = get_resolver().resolve
 
 if TYPE_CHECKING:
     from typing import Any, Optional, Dict, Sequence
     from django.db.models.options import Options
-    from django.db.models.query import QuerySet
     from django.http import HttpRequest
     from django.template.response import TemplateResponse
     from apps.home.mixins.admin import CustomAdminPage

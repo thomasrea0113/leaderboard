@@ -1,0 +1,8 @@
+autodetect: false
+uses:
+  - django
+pyflakes:
+  disable:
+    - F401
+dodgy:
+  run: false

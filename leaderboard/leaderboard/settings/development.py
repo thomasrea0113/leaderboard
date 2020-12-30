@@ -1,5 +1,5 @@
 from os import path
-from . import *  # pylint: disable=unused-import
+from . import *  # pylint: disable=unused-import,wildcard-import
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -14,7 +14,7 @@ MIDDLEWARE = [
 ] + MIDDLEWARE  # noqa
 
 
-def custom_show_toolbar(request):
+def custom_show_toolbar(_):
     return True  # Always show toolbar in development, regardless of host
 
 

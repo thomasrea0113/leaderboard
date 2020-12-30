@@ -4,7 +4,7 @@ ARG ENV=production
 
 RUN if [ "$ENV" = "development" ]; then \
     curl -sL https://deb.nodesource.com/setup_12.x | bash - \
-    && apt-get install -y nodejs \
+    && apt-get install -y nodejs inotify-tools \
     # Install Docker CE CLI
     apt-transport-https ca-certificates curl gnupg2 lsb-release \
     && curl -fsSL https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/gpg | apt-key add - 2>/dev/null \

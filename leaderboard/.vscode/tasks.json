@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "lint",
+      "type": "process",
+      "command": "bash",
+      "args": ["${workspaceFolder}/lint.sh"],
+      "problemMatcher": {
+        "owner": "prospector (project)",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^(.*):(\\d+): \\[(.*), (.*)] (.*)$",
+          "file": 1,
+          "line": 2,
+          "code": 3,
+          "message": 5
+        },
+        "background": {
+          "beginsPattern": "BEGIN LINT",
+          "endsPattern": "END LINT"
+        }
+      },
+      "isBackground": true,
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}

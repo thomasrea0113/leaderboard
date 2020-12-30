@@ -51,7 +51,9 @@
     "emmet.includeLanguages": {
       "django-html": "html"
     },
-    "python.linting.pycodestyleArgs": ["--max-line-length=100"]
+    "python.linting.pycodestyleArgs": [
+      "--max-line-length=100"
+    ]
   },
   "launch": {
     "version": "0.2.0",
