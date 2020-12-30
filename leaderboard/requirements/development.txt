@@ -1,5 +1,7 @@
 -r base.txt
 
+# TODO freeze package version
+python-dateutil
 autopep8
 pycodestyle
 prospector

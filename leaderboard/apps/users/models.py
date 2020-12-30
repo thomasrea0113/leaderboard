@@ -15,6 +15,6 @@ class AppUser(AbstractUser):
     gender = models.CharField(max_length=6, choices=Genders.choices)
     birthday = models.DateField(blank=True, null=True)
     weight = models.DecimalField(
-        max_digits=3, decimal_places=2, null=True, blank=True)
+        max_digits=5, decimal_places=2, null=True, blank=True)
 
     objects = AppUserManager()
