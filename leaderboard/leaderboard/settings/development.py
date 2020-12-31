@@ -6,6 +6,7 @@ DEBUG = True
 
 
 INSTALLED_APPS += [  # noqa
+    'apps.devapp',  # includes some useful development commands
     'debug_toolbar'
 ]
 

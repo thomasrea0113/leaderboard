@@ -9,7 +9,7 @@ from django.db.utils import IntegrityError
 
 from apps.users.models import Genders
 from apps.divisions.models import Board, Score
-from . import seed
+from apps.home.management.commands import seed
 
 User = get_user_model()
 
@@ -23,23 +23,32 @@ def date_between(start: 'date', end: 'date'):
     return start + timedelta(seconds=random_second)
 
 
+def random_chance(probability: 'float') -> bool:
+    return random.randint(0, 100) * .01 <= probability
+
+
 class Command(seed.Command):
     def handle(self, *args: 'Any', **options: 'Any') -> 'Optional[str]':
         super().handle(*args, **options)
         manager = cast(UserManager[AbstractBaseUser], User.objects)
 
         for user_number in range(0, 100):
-            gender = Genders.MALE if random.randint(
-                0, 1) == 0 else Genders.FEMALE
+            gender = Genders.MALE if random_chance(.5) == 0 else Genders.FEMALE
 
             user_args: 'dict[str, Any]' = {'username': f'test-user-{user_number}',
                                            'gender': gender.value,
                                            'password': 'Password123'}
 
-            if random.randint(0, 1) == 0:
+            if random_chance(.5):
                 user_args.update(email=f'test-user-{user_number}@gmail.com')
 
-            if random.randint(0, 2) != 2:
+            if random_chance(.5):
+                user_args.update(first_name=f'first{user_number}')
+
+            if random_chance(.5):
+                user_args.update(last_name=f'last{user_number}')
+
+            if random_chance(.85):
                 if gender == Genders.FEMALE:
                     weight = random.randint(4000, 9000) * .01
                 else:
@@ -47,14 +56,14 @@ class Command(seed.Command):
 
                 user_args.update(weight=round(weight, 2))
 
-            if random.randint(0, 2) != 2:
+            if random_chance(.85):
                 start = date.today() - relativedelta(years=81)
                 end = date.today() - relativedelta(years=7)
                 birthday = date_between(start, end)
                 user_args.update(birthday=birthday)
 
             try:
-                manager.create_user(**user_args)
+                manager.update_or_create(**user_args)
             except IntegrityError:
                 pass
 
