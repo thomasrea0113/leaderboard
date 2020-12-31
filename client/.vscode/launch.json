@@ -5,11 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Client",
             "type": "pwa-node",
             "request": "launch",
-            "name": "Launch Client",
             "program": "${workspaceFolder}/node_modules/.bin/webpack",
             "args": ["--config", "${workspaceFolder}/webpack.development.js"]
+        },
+        {
+            "name": "Launch Chrome",
+            "type": "pwa-chrome",
+            "request": "launch",
+            "url": "http://localhost:3000/admin/users/appuser/728/change/",
+            "webRoot": "${workspaceFolder:client}"
         }
     ]
 }

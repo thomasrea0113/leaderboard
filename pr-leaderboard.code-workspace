@@ -51,9 +51,7 @@
     "emmet.includeLanguages": {
       "django-html": "html"
     },
-    "python.linting.pycodestyleArgs": [
-      "--max-line-length=100"
-    ]
+    "python.linting.pycodestyleArgs": ["--max-line-length=100"]
   },
   "launch": {
     "version": "0.2.0",
@@ -61,15 +59,6 @@
       {
         "name": "Compound",
         "configurations": ["Launch Chrome", "Launch Client", "Launch Python"]
-      }
-    ],
-    "configurations": [
-      {
-        "name": "Launch Chrome",
-        "request": "launch",
-        "type": "pwa-chrome",
-        "url": "http://localhost:3000/admin/divisions/score/?board__id__in=87&user__id__in=2%2C20",
-        "webRoot": "${workspaceFolder:client}"
       }
     ]
   }

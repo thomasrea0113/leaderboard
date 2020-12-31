@@ -1,0 +1,3 @@
+{% for model in query_set %}
+<a class="changelink" href="{% url url_name object_id=model.pk %}">{{ model }}</a>{% if not forloop.last %},&MediumSpace;{% endif %}
+{% endfor %}
