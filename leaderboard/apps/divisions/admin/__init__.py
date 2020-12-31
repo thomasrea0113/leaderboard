@@ -5,11 +5,11 @@ from django.contrib import admin
 from django.forms import ModelForm
 
 from apps.divisions.admin.actions import approve_score
-from apps.home.mixins.admin.admin import CustomActionFormMixin
-from apps.home.mixins.admin import AdminChangeLinksMixin
+from apps.home.mixins.admin import AdminChangeLinksMixin, \
+    AdminSelect2ListFilterMixin, CustomActionFormMixin
 
-from .. import models
 from . import forms
+from .. import models
 
 
 resolve = get_resolver().resolve
@@ -49,10 +49,13 @@ you select 2 board definitions, 1 weight class, and 2 divisions, 2x2x1=4 boards 
         # render_change_form will set opts in the super call, but we need it now
         opts: 'Options' = self.model._meta
         context = super().get_page_context(options)
-        context.update({
-            'title': f'Add Many {opts.verbose_name_plural}',
-            'has_multiselect': True,
-        })
+
+        if options['name'] == 'add-many':
+            context.update({
+                'title': f'Add Many {opts.verbose_name_plural}',
+                'has_multiselect': True,
+            })
+
         return context
 
     def save_custom_form(self, request: 'HttpRequest', form: 'ModelForm'):
@@ -65,12 +68,13 @@ you select 2 board definitions, 1 weight class, and 2 divisions, 2x2x1=4 boards 
 
 
 @admin.register(models.WeightClass)
-class WeightClassAdmin(admin.ModelAdmin):
-    pass
+class WeightClassAdmin(AdminSelect2ListFilterMixin, admin.ModelAdmin):
+    list_display = ['__str__', 'gender', 'lower_bound', 'upper_bound']
+    list_filter = ['gender', 'lower_bound', 'upper_bound']
 
 
 @admin.register(models.Score)
-class ScoreAdmin(AdminChangeLinksMixin, admin.ModelAdmin):
+class ScoreAdmin(AdminSelect2ListFilterMixin, AdminChangeLinksMixin, admin.ModelAdmin):
     actions = [approve_score]
 
     list_display = ['value', 'user_link',
@@ -86,9 +90,3 @@ class ScoreAdmin(AdminChangeLinksMixin, admin.ModelAdmin):
         ('user', admin.RelatedOnlyFieldListFilter),
         'approved'
     )
-
-    def changelist_view(self, request: 'HttpRequest',
-                        extra_context: 'Optional[Dict[str, Any]]' = None) -> 'TemplateResponse':
-        ctx: 'Dict[str, Any]' = extra_context or {}
-        ctx.update({'has_multiselect': True})
-        return super().changelist_view(request, extra_context=ctx)

@@ -1,14 +1,16 @@
-from django.core.management.base import CommandParser
+
 from typing import TYPE_CHECKING, cast
 import random
+from itertools import product
 from datetime import timedelta, date
 from dateutil.relativedelta import relativedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import UserManager, AbstractBaseUser
+from django.core.management.base import CommandParser
 
 from apps.users.models import Genders
-from apps.divisions.models import Board, Score
+from apps.divisions.models import Board, Score, WeightClass
 from apps.home.management.commands import seed
 
 User = get_user_model()
@@ -36,6 +38,14 @@ class Command(seed.Command):
     def handle(self, *args: 'Any', **options: 'Any') -> 'Optional[str]':
         super().handle(*args, **options)
         manager = cast(UserManager[AbstractBaseUser], User.objects)
+
+        def yield_weight_classes():
+            for gender in Genders.values:
+                yield WeightClass(lower_bound=0, upper_bound=0, gender=gender)
+            yield WeightClass(lower_bound=0, upper_bound=0, gender=None)
+
+        WeightClass.objects.bulk_create(
+            yield_weight_classes(), ignore_conflicts=True)
 
         for user_number in range(0, 100):
             gender = Genders.MALE if random_chance(.5) == 0 else Genders.FEMALE

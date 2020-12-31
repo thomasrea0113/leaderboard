@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from django.http.request import HttpRequest
     from django.urls.resolvers import URLPattern
     from django.forms import ModelForm
+    from django.template.response import TemplateResponse
     _Base = ModelAdmin
 else:
     _Base = object
@@ -126,3 +127,11 @@ class CustomActionFormMixin(_Base):
 
     def get_urls(self) -> 'List[URLPattern]':
         return self.custom_urls + super().get_urls()
+
+
+class AdminSelect2ListFilterMixin(_Base):
+    def changelist_view(self, request: 'HttpRequest',
+                        extra_context: 'Optional[Dict[str, Any]]' = None) -> 'TemplateResponse':
+        ctx: 'Dict[str, Any]' = extra_context or {}
+        ctx.update({'has_multiselect': True})
+        return super().changelist_view(request, extra_context=ctx)
