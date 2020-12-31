@@ -1,4 +1,7 @@
+from datetime import date
 from typing import TYPE_CHECKING
+from dateutil.relativedelta import relativedelta
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.query_utils import Q
@@ -7,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.users.managers import AppUserManager
 
 if TYPE_CHECKING:
+    from typing import Any
     from django.db.models.query import QuerySet
     from apps.divisions.models import WeightClass
 
@@ -26,6 +30,10 @@ class AppUser(AbstractUser):
         max_digits=5, decimal_places=2, null=True, blank=True)
 
     objects = AppUserManager()
+
+    @property
+    def age(self):
+        return relativedelta(date.today(), self.birthday).years if self.birthday else None
 
     def get_eligable_weight_classes(self) -> 'QuerySet[WeightClass]':
         # all users are eligble of no weight bounds are specified
@@ -57,3 +65,14 @@ class AppUser(AbstractUser):
 
         # we then only want the intersection of both queries
         return WeightClass.objects.filter(weight_query & gender_query)
+
+    def get_eligable_age_divisions(self) -> 'QuerySet[WeightClass]':
+        # TODO implement age query
+        age = self.age
+
+        # TODO Genders being in the user models module is causing a circular reference.
+        # move genders to separate module caused the appUser module to appear as not registered
+        # pylint: disable=import-outside-toplevel
+        from apps.divisions.models import AgeDivision
+
+        return AgeDivision.objects.filter()
