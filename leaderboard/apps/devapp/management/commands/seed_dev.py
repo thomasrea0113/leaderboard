@@ -1,3 +1,4 @@
+from django.core.management.base import CommandParser
 from typing import TYPE_CHECKING, cast
 import random
 from datetime import timedelta, date
@@ -5,7 +6,6 @@ from dateutil.relativedelta import relativedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import UserManager, AbstractBaseUser
-from django.db.utils import IntegrityError
 
 from apps.users.models import Genders
 from apps.divisions.models import Board, Score
@@ -28,6 +28,11 @@ def random_chance(probability: 'float') -> bool:
 
 
 class Command(seed.Command):
+    def add_arguments(self, parser: 'CommandParser') -> None:
+        super().add_arguments(parser)
+        parser.add_argument(
+            '--reset-passwords', action='store_true', help='Force a reset of all user passwords to the default')
+
     def handle(self, *args: 'Any', **options: 'Any') -> 'Optional[str]':
         super().handle(*args, **options)
         manager = cast(UserManager[AbstractBaseUser], User.objects)
@@ -36,8 +41,7 @@ class Command(seed.Command):
             gender = Genders.MALE if random_chance(.5) == 0 else Genders.FEMALE
 
             user_args: 'dict[str, Any]' = {'username': f'test-user-{user_number}',
-                                           'gender': gender.value,
-                                           'password': 'Password123'}
+                                           'gender': gender.value}
 
             if random_chance(.5):
                 user_args.update(email=f'test-user-{user_number}@gmail.com')
@@ -62,10 +66,11 @@ class Command(seed.Command):
                 birthday = date_between(start, end)
                 user_args.update(birthday=birthday)
 
-            try:
-                manager.update_or_create(**user_args)
-            except IntegrityError:
-                pass
+            user, created = manager.update_or_create(
+                username=user_args['username'], defaults=user_args)
+            if created or options['reset_passwords']:
+                user.set_password('Password123')
+                user.save()
 
         boards = [v[0] for v in Board.objects.all().values_list('id')]
         users = [v[0] for v in User.objects.all().values_list('id')]
