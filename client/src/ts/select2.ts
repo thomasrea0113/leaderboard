@@ -44,19 +44,15 @@ import * as $ from 'jquery';
                 .map((s) => {
                     const val = new URLSearchParams(window.location.search);
                     val.append(field, s);
-                    val.sort();
-                    return val.toString();
+                    return val;
                 });
 
             if (selected !== undefined && selected.length !== 0) {
                 const options = <JQuery<HTMLOptionElement>>$this.children('option');
                 options
                     .filter((_, e) => {
-                        // TODO it seems redundant and costly to keep creating these URLSearchParams,
-                        // but we need to ensure the same sort order for the sake of comparison
-                        const params = new URLSearchParams(e.value);
-                        params.sort();
-                        return selected.includes(params.toString());
+                        const params = Array.from(new URLSearchParams(e.value));
+                        return selected.some((s) => params.every(([k, v]) => s.get(k) === v));
                     })
                     .prop('selected', true);
             }
