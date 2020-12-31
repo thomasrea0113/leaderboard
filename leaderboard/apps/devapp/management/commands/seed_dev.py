@@ -42,16 +42,15 @@ class Command(seed.Command):
         def yield_weight_classes():
             for gender in Genders.values:
                 yield WeightClass(lower_bound=0, upper_bound=0, gender=gender)
-            yield WeightClass(lower_bound=0, upper_bound=0, gender=None)
 
         WeightClass.objects.bulk_create(
             yield_weight_classes(), ignore_conflicts=True)
 
         for user_number in range(0, 100):
-            gender = Genders.MALE if random_chance(.5) == 0 else Genders.FEMALE
+            gender = random.choice(Genders.values)
 
             user_args: 'dict[str, Any]' = {'username': f'test-user-{user_number}',
-                                           'gender': gender.value}
+                                           'gender': gender}
 
             if random_chance(.5):
                 user_args.update(email=f'test-user-{user_number}@gmail.com')
@@ -63,10 +62,10 @@ class Command(seed.Command):
                 user_args.update(last_name=f'last{user_number}')
 
             if random_chance(.85):
-                if gender == Genders.FEMALE:
-                    weight = random.randint(4000, 9000) * .01
-                else:
+                if gender == Genders.MALE.value:
                     weight = random.randint(5000, 12500) * .01
+                else:
+                    weight = random.randint(4000, 9000) * .01
 
                 user_args.update(weight=round(weight, 2))
 

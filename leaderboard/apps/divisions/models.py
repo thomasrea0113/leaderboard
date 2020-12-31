@@ -16,12 +16,12 @@ if TYPE_CHECKING:
 
 class WeightClass(models.Model):
     gender = models.CharField(
-        max_length=1, blank=True, null=True, choices=Genders.choices)
+        max_length=1, blank=True, choices=Genders.choices, default=Genders.UNSPECIFIED)
     lower_bound = models.PositiveIntegerField(default=0)
     upper_bound = models.PositiveIntegerField(default=0)
 
     def __str__(self) -> str:
-        gender_str = f'{str(Genders(self.gender).label)}, ' if self.gender else ''
+        gender_str = f'{str(Genders(self.gender).label)}, '
         # TODO dynamically convert to lbs if the user prefers LBs
         return _(f'{gender_str}{self.lower_bound} - {self.upper_bound} KGs')
 

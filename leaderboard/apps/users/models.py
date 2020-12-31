@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 
 class Genders(models.TextChoices):
+    UNSPECIFIED = '', _('Unspecified')
     MALE = 'M', _('Male')
     FEMALE = 'F', _('Female')
 
@@ -19,7 +20,7 @@ class Genders(models.TextChoices):
 # Create your models here.
 class AppUser(AbstractUser):
     gender = models.CharField(
-        max_length=6, choices=Genders.choices, blank=True, null=True)
+        max_length=6, choices=Genders.choices, default=Genders.UNSPECIFIED, blank=True)
     birthday = models.DateField(blank=True, null=True)
     weight = models.DecimalField(
         max_digits=5, decimal_places=2, null=True, blank=True)
@@ -45,8 +46,8 @@ class AppUser(AbstractUser):
             )
 
         # all users are eligble if no gender is specified
-        gender_query = Q(gender__isnull=True)
-        if self.gender is not None:
+        gender_query = Q(gender=Genders.UNSPECIFIED)
+        if self.gender != Genders.UNSPECIFIED:
             gender_query |= Q(gender=self.gender)
 
         # TODO Genders being in the user models module is causing a circular reference.
