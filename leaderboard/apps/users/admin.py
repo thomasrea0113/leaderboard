@@ -1,14 +1,9 @@
-
-from typing import TYPE_CHECKING
 from django.contrib import admin
-from django.template.loader import render_to_string
 from django.contrib.auth.admin import UserAdmin
-from .models import AppUser
 
-if TYPE_CHECKING:
-    from typing import Optional
-    from django.http import HttpRequest
-    from django.db.models.options import Options
+from apps.home.widgets.admin import ModelChangeListWidget
+
+from .models import AppUser
 
 
 @admin.register(AppUser)
@@ -21,22 +16,12 @@ class AppUserAdmin(UserAdmin):
                        'eligable_age_divisions']
 
     def eligable_age_divisions(self, user: 'AppUser'):
-        query_set = user.get_eligable_age_divisions()
-        meta: 'Options' = query_set.model._meta
-        url_name = f'{self.admin_site.name}:{meta.app_label}_{meta.model_name}_change'
-
-        return render_to_string('admin/includes/model_link_list.html', context={
-            'url_name': url_name, 'query_set': query_set,
-            'admin_site': self.admin_site})
+        return ModelChangeListWidget(self.admin_site).render('eligble-age-divisions',
+                                                             user.get_eligable_age_divisions())
 
     def eligable_weight_classes(self, user: 'AppUser'):
-        query_set = user.get_eligable_weight_classes()
-        meta: 'Options' = query_set.model._meta
-        url_name = f'{self.admin_site.name}:{meta.app_label}_{meta.model_name}_change'
-
-        return render_to_string('admin/includes/model_link_list.html', context={
-            'url_name': url_name, 'query_set': query_set,
-            'admin_site': self.admin_site})
+        return ModelChangeListWidget(self.admin_site).render('eligble-weight-classes',
+                                                             user.get_eligable_weight_classes())
 
     def changelist_view(self, request, extra_context=None):
         (extra_context := extra_context or {}).update(has_multiselect=True)

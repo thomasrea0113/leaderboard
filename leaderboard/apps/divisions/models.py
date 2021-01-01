@@ -26,8 +26,6 @@ class WeightClass(models.Model):
         return _(f'{gender_str}{self.lower_bound} - {self.upper_bound} KGs')
 
     class Meta:
-        # TODO in postgres, null is not considered when checking unique constraints,
-        # so duplicates are possible
         constraints = [
             models.CheckConstraint(
                 check=Q(lower_bound__lt=F('upper_bound')) | Q(upper_bound=0),

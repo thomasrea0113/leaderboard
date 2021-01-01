@@ -1,5 +1,4 @@
 from datetime import date
-from functools import lru_cache
 from typing import TYPE_CHECKING
 from dateutil.relativedelta import relativedelta
 
@@ -37,9 +36,7 @@ class AppUser(AbstractUser):
     def age(self):
         return relativedelta(date.today(), self.birthday).years if self.birthday else None
 
-    # TODO investigate cache sizes
     @staticmethod
-    @lru_cache(150)
     def __get_bound_query(value: 'Any'):
         # all users are eligble of no weight bounds are specified
         query = Q(lower_bound__lt=1, upper_bound__lt=1)

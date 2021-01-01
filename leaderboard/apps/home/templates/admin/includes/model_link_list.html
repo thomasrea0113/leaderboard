@@ -1,3 +1,5 @@
-{% for model in query_set %}
+<span id="{{widget.name}}">
+{% for model in widget.value %}
 <a class="changelink" href="{% url url_name object_id=model.pk %}">{{ model }}</a>{% if not forloop.last %},&MediumSpace;{% endif %}
 {% endfor %}
+</span>
