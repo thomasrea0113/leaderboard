@@ -15,25 +15,35 @@ from .. import models
 resolve = get_resolver().resolve
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Dict, Sequence
+    from typing import Any, Dict, Sequence
     from django.db.models.options import Options
     from django.http import HttpRequest
-    from django.template.response import TemplateResponse
     from apps.home.mixins.admin import CustomAdminPage
 
 
 @admin.register(models.AgeDivision)
-class AgeDivisionAdmin(admin.ModelAdmin):
-    pass
+class AgeDivisionAdmin(AdminSelect2ListFilterMixin, admin.ModelAdmin):
+    list_display = ('name', 'lower_bound', 'upper_bound')
+    list_filter = ('lower_bound', 'upper_bound')
 
 
 @admin.register(models.BoardDefinition)
-class BoardDefinitionAdmin(admin.ModelAdmin):
-    pass
+class BoardDefinitionAdmin(AdminSelect2ListFilterMixin, admin.ModelAdmin):
+    list_display = ('name', 'unit_type', 'description')
+    list_filter = ('unit_type',)
 
 
 @admin.register(models.Board)
-class BoardAdmin(CustomActionFormMixin, admin.ModelAdmin):
+class BoardAdmin(AdminSelect2ListFilterMixin, AdminChangeLinksMixin,
+                 CustomActionFormMixin, admin.ModelAdmin):
+    list_display = ('__str__', 'board_definition_link',
+                    'weight_class_link', 'division_link')
+    change_links = ('board_definition', 'division', 'weight_class')
+    list_filter = (
+        ('board_definition', admin.RelatedOnlyFieldListFilter),
+        ('division', admin.RelatedOnlyFieldListFilter),
+        ('weight_class', admin.RelatedOnlyFieldListFilter)
+    )
     custom_pages: 'Sequence[CustomAdminPage]' = [
         {
             'name': 'add-many',
