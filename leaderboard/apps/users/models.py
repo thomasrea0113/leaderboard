@@ -6,20 +6,16 @@ from dateutil.relativedelta import relativedelta
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.query_utils import Q
-from django.utils.translation import gettext_lazy as _
 
+from apps.divisions.models import WeightClass
 from apps.users.managers import AppUserManager
+from apps.divisions.models import AgeDivision
+
+from .choices import Genders
 
 if TYPE_CHECKING:
     from typing import Any
     from django.db.models.query import QuerySet
-    from apps.divisions.models import WeightClass
-
-
-class Genders(models.TextChoices):
-    UNSPECIFIED = '', _('Unspecified')
-    MALE = 'M', _('Male')
-    FEMALE = 'F', _('Female')
 
 
 # Create your models here.
@@ -68,20 +64,9 @@ class AppUser(AbstractUser):
         if self.gender != Genders.UNSPECIFIED:
             gender_query |= Q(gender=self.gender)
 
-        # TODO Genders being in the user models module is causing a circular reference.
-        # move genders to separate module caused the appUser module to appear as not registered
-        # pylint: disable=import-outside-toplevel
-        from apps.divisions.models import WeightClass
-
         # we then only want the intersection of both queries
         return WeightClass.objects.filter(bound_query & gender_query)
 
     def get_eligable_age_divisions(self) -> 'QuerySet[WeightClass]':
         query = self.__get_bound_query(self.age)
-
-        # TODO Genders being in the user models module is causing a circular reference.
-        # move genders to separate module caused the appUser module to appear as not registered
-        # pylint: disable=import-outside-toplevel
-        from apps.divisions.models import AgeDivision
-
         return AgeDivision.objects.filter(query)

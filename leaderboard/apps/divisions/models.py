@@ -6,7 +6,7 @@ from django.db.models.expressions import F
 from django.db.models.query_utils import Q
 from django.utils.translation import gettext as _
 
-from apps.users.models import Genders
+from apps.users.choices import Genders
 
 User = get_user_model()
 
