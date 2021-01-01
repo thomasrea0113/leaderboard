@@ -45,10 +45,11 @@ class AppUserAdmin(UserAdmin):
 
 # fieldsets is static, so we need to add them only once, not per instance
 # typing is incorrect in the current version of the django-stubs
-AppUserAdmin.fieldsets += (
-    ('Eligibility', {
-     'fields': ('eligable_weight_classes', 'eligable_age_divisions')}),
-)  # type: ignore[reportGeneralTypeIssues]
+
+AppUserAdmin.fieldsets += (('Eligibility',
+                            {
+                                'fields': ('eligable_weight_classes', 'eligable_age_divisions')
+                            }),)  # type: ignore[reportGeneralTypeIssues]
 info = next(
     filter(lambda fs: fs[0] == 'Personal info', AppUserAdmin.fieldsets))[1]
 # type: ignore[reportGeneralTypeIssues]
