@@ -10,7 +10,7 @@ from django.contrib.auth.models import UserManager, AbstractBaseUser
 from django.core.management.base import CommandParser
 
 from apps.users.models import Genders
-from apps.divisions.models import Board, Score, WeightClass
+from apps.divisions.models import AgeDivision, Board, Score, WeightClass
 from apps.home.management.commands import seed
 
 User = get_user_model()
@@ -45,6 +45,12 @@ class Command(seed.Command):
 
         WeightClass.objects.bulk_create(
             yield_weight_classes(), ignore_conflicts=True)
+
+        AgeDivision.objects.update_or_create(name='Any', defaults={
+            'name': 'Any',
+            'lower_bound': 0,
+            'upper_bound': 0
+        })
 
         for user_number in range(0, 100):
             gender = random.choice(Genders.values)
