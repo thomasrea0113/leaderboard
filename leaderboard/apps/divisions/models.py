@@ -130,11 +130,11 @@ class BoardDefinition(models.Model):
 
 class Board(models.Model):
     board_definition = models.ForeignKey(
-        BoardDefinition, on_delete=models.PROTECT)
+        BoardDefinition, on_delete=models.CASCADE)
     division = models.ForeignKey(
-        AgeDivision, on_delete=models.PROTECT)
+        AgeDivision, on_delete=models.CASCADE)
     weight_class = models.ForeignKey(
-        WeightClass, on_delete=models.PROTECT)
+        WeightClass, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return (f'{self.board_definition.name} ({self.division}' +

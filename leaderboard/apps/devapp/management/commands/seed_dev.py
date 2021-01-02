@@ -1,12 +1,13 @@
 
 from typing import TYPE_CHECKING, cast
-import random
+from random import Random
 from itertools import product
 from datetime import timedelta, date
 from dateutil.relativedelta import relativedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import UserManager, AbstractBaseUser
+from django.core import management
 from django.core.management.base import CommandParser
 
 from apps.users.models import Genders
@@ -14,6 +15,9 @@ from apps.divisions.models import AgeDivision, Board, Score, WeightClass
 from apps.home.management.commands import seed
 
 User = get_user_model()
+
+# seed with 1 to get constistent generation
+random = Random(1)
 
 if TYPE_CHECKING:
     from typing import Any, Optional
@@ -33,11 +37,22 @@ class Command(seed.Command):
     def add_arguments(self, parser: 'CommandParser') -> None:
         super().add_arguments(parser)
         parser.add_argument(
-            '--reset-passwords', action='store_true', help='Force a reset of all user passwords to the default')
+            '--reset-passwords', action='store_true',
+            help='Force a reset of all user passwords to the default')
+        parser.add_argument(
+            '--light', action='store_true',
+            help="Don't generate nearly as many boards/users/scores")
 
     def handle(self, *args: 'Any', **options: 'Any') -> 'Optional[str]':
         super().handle(*args, **options)
+
         manager = cast(UserManager[AbstractBaseUser], User.objects)
+
+        if options['light']:
+            AgeDivision.objects.exclude(pk__in=AgeDivision.objects.all()[
+                :3].values_list('pk', flat=True)).delete()
+            WeightClass.objects.exclude(pk__in=WeightClass.objects.all()[
+                :3].values_list('pk', flat=True)).delete()
 
         def yield_weight_classes():
             for gender in Genders.values:
@@ -52,7 +67,7 @@ class Command(seed.Command):
             'upper_bound': 0
         })
 
-        for user_number in range(0, 100):
+        for user_number in range(0, 5 if options['light'] else 100):
             gender = random.choice(Genders.values)
 
             user_args: 'dict[str, Any]' = {'username': f'test-user-{user_number}',
@@ -92,7 +107,7 @@ class Command(seed.Command):
         possible_scores = [round(v*.01, 2) for v in range(5000, 40000)]
 
         def yield_scores():
-            for score_id in range(1, 100000):
+            for score_id in range(1, 1000 if options['light'] else 100000):
                 # explicility set id so that subsequent seeds don't add another 100000 scores
                 yield Score(id=score_id, board_id=random.choice(boards),
                             user_id=random.choice(users), value=random.choice(possible_scores))

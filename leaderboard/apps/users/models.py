@@ -33,9 +33,6 @@ class AppUser(AbstractUser):
 
     objects = AppUserManager()
 
-    def __str__(self) -> str:
-        return '{username}, {gender}, {weight}, {age}'.format(**self.__dict__)
-
     @staticmethod
     def __binds_query(value):
         """Used to find all instances of a BoundModel that is bound
