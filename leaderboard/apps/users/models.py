@@ -28,14 +28,23 @@ class AppUser(AbstractUser):
     weight = models.DecimalField(
         max_digits=5, decimal_places=2, null=True, blank=True)
 
+    # app user annotates this field
     age: 'Optional[int]' = None
 
     objects = AppUserManager()
 
+    def __str__(self) -> str:
+        return '{username}, {gender}, {weight}, {age}'.format(**self.__dict__)
+
     @staticmethod
-    def __get_bound_query(value: 'Any'):
-        # all users are eligble of no weight bounds are specified
+    def __binds_query(value):
+        """Used to find all instances of a BoundModel that is bound
+        by the provided value
+        """
+
+        # all users are eligble if no bounds are specified
         query = Q(lower_bound__lt=1, upper_bound__lt=1)
+
         if value is not None:
             # both bounds. need separate queries because of repeated keys
             query |= (Q(lower_bound__gt=0, upper_bound__gt=0) & Q(
@@ -54,7 +63,7 @@ class AppUser(AbstractUser):
         return query
 
     def get_eligable_weight_classes(self) -> 'QuerySet[WeightClass]':
-        bound_query = self.__get_bound_query(self.weight)
+        bound_query = self.__binds_query(self.weight)
 
         # all users are eligble if no gender is specified
         gender_query = Q(gender=Genders.UNSPECIFIED)
@@ -70,7 +79,7 @@ class AppUser(AbstractUser):
         return WeightClass.objects.filter(bound_query & gender_query)
 
     def get_eligable_age_divisions(self) -> 'QuerySet[WeightClass]':
-        query = self.__get_bound_query(self.age)
+        query = self.__binds_query(self.age)
 
         # TODO Genders being in the user models module is causing a circular reference.
         # move genders to separate module caused the appUser module to appear as not registered

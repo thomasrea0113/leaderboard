@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from typing import TYPE_CHECKING
 from django.db import models
 from django.contrib.auth import get_user_model
@@ -15,11 +16,61 @@ if TYPE_CHECKING:
     from django.db.models.query import QuerySet
 
 
-class WeightClass(models.Model):
-    gender = models.CharField(
-        max_length=1, blank=True, choices=Genders.choices, default=Genders.UNSPECIFIED)
+class BoundModel(models.Model):
     lower_bound = models.PositiveIntegerField(default=0)
     upper_bound = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        abstract = True
+        constraints = [
+            models.CheckConstraint(
+                check=Q(lower_bound__lt=F('upper_bound')) | Q(upper_bound=0),
+                name='%(app_label)s_%(class)s_range')
+        ]
+
+    def __satisfied_users_query(self, user_field_name: 'str'):
+        lower_bound = self.lower_bound
+        upper_bound = self.upper_bound
+
+        # all users are eligble if no bounds are specified
+        if lower_bound == 0 and upper_bound == 0:
+            return Q(pk__isnull=False)
+
+        # both bounds set
+        if lower_bound != 0 and upper_bound != 0:
+            query = Q(**{
+                f'{user_field_name}__gte': lower_bound,
+                f'{user_field_name}__lt': upper_bound})
+
+        # upper bound set
+        elif upper_bound != 0:
+            query = Q(**{f'{user_field_name}__lt': upper_bound})
+
+        # lower bound set. Ff both are not zero, but upper bound is all not zero,
+        # then lower bound must be zero
+        else:
+            query = Q(**{f'{user_field_name}__gt': lower_bound})
+
+        # if the bounds are set, the user must have a value for the comparing field
+        not_null = Q(**{f'{user_field_name}__isnull': False})
+
+        return not_null & query
+
+    def _get_eligble_users(self, user_field_name: 'str') -> 'QuerySet[AppUser]':
+        """Gets a query that can be used to find users who's provided field
+        fall within this models bounds
+        """
+        query = self.__satisfied_users_query(user_field_name)
+        return User.objects.filter(query)
+
+    @abstractmethod
+    def get_eligble_users(self) -> 'QuerySet[AppUser]':
+        raise NotImplementedError()
+
+
+class WeightClass(BoundModel):
+    gender = models.CharField(
+        max_length=1, blank=True, choices=Genders.choices, default=Genders.UNSPECIFIED)
 
     def __str__(self) -> str:
         gender_str = f'{str(Genders(self.gender).label)}, '
@@ -27,40 +78,38 @@ class WeightClass(models.Model):
         return _(f'{gender_str}{self.lower_bound} - {self.upper_bound} KGs')
 
     class Meta:
-        constraints = [
-            models.CheckConstraint(
-                check=Q(lower_bound__lt=F('upper_bound')) | Q(upper_bound=0),
-                name='weight_range'),
+        constraints = BoundModel.Meta.constraints + [
             models.UniqueConstraint(
                 fields=['lower_bound', 'upper_bound', 'gender'],
                 name='unique_weight_class')
-        ]
+        ]  # type: ignore[reportGeneralTypeIssues]
 
     def get_eligble_users(self) -> 'QuerySet[AppUser]':
-        # TODO handle conditions
-        return AppUser.objects.filter(weight__gte=self.lower_bound, weight__lt=self.upper_bound)
+        """Gets a query that can be used to find users who's provided field
+        fall within this models bounds
+        """
+        eligble = super()._get_eligble_users('weight')
+
+        if self.gender != Genders.UNSPECIFIED:
+            eligble = eligble.filter(gender=self.gender)
+
+        return eligble
 
 
-class AgeDivision(models.Model):
+class AgeDivision(BoundModel):
     name = models.CharField(max_length=50, unique=True)
-    lower_bound = models.PositiveIntegerField(default=0)
-    upper_bound = models.PositiveIntegerField(default=0)
 
     def __str__(self) -> str:
         return _(f'{self.name}, Ages {self.lower_bound} - {self.upper_bound}')
 
     class Meta:
-        constraints = [
-            models.CheckConstraint(
-                check=Q(lower_bound__lt=F('upper_bound')) | Q(upper_bound=0),
-                name='age_range'),
+        constraints = BoundModel.Meta.constraints + [
             models.UniqueConstraint(
                 fields=['lower_bound', 'upper_bound'], name='unique_age_range')
-        ]
+        ]  # type: ignore[reportGeneralTypeIssues]
 
     def get_eligble_users(self) -> 'QuerySet[AppUser]':
-        # TODO handle conditions
-        return AppUser.objects.filter(age__gte=self.lower_bound, age__lt=self.upper_bound)
+        return self._get_eligble_users('age')
 
 
 class UnitType(models.TextChoices):
@@ -99,7 +148,9 @@ class Board(models.Model):
 
     def get_eligble_users(self):
         # TODO implement
-        return AppUser.objects.all()
+        weight_class: 'WeightClass' = self.weight_class
+        division: 'AgeDivision' = self.division
+        return weight_class.get_eligble_users().intersection(division.get_eligble_users())
 
 
 class Score(models.Model):

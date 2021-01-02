@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, TypedDict
+from apps.home.widgets.admin import ModelChangeListWidget
+from typing import Generic, TYPE_CHECKING, TypedDict
 from django.shortcuts import redirect
 from django.urls.resolvers import get_resolver
 from django.urls import path
