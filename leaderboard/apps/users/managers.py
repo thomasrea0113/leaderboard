@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 from django.contrib.auth.models import UserManager
+from django.db.models.expressions import RawSQL
 
 UserManagerBase = UserManager
 
@@ -11,5 +12,5 @@ if TYPE_CHECKING:
 
 class AppUserManager(UserManagerBase):
     def get_queryset(self):
-        return super().get_queryset().extra(
-            select={'age': "date_part('year', age(current_date, birthday))::int"})
+        return super().get_queryset().annotate(age=RawSQL(
+            "date_part('year', age(current_date, birthday))::int", []))

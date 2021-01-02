@@ -7,6 +7,7 @@ from django.forms import ModelForm
 from apps.divisions.admin.actions import approve_score
 from apps.home.mixins.admin import AdminChangeLinksMixin, \
     AdminSelect2ListFilterMixin, CustomActionFormMixin
+from apps.home.widgets.admin import ModelChangeListWidget
 
 from . import forms
 from .. import models
@@ -25,6 +26,11 @@ if TYPE_CHECKING:
 class AgeDivisionAdmin(AdminSelect2ListFilterMixin, admin.ModelAdmin):
     list_display = ('name', 'lower_bound', 'upper_bound')
     list_filter = ('lower_bound', 'upper_bound')
+    readonly_fields = ('eligble_users',)
+
+    def eligble_users(self, obj: 'models.AgeDivision'):
+        return ModelChangeListWidget(self.admin_site).render('eligble-users',
+                                                             obj.get_eligble_users())
 
 
 @admin.register(models.BoardDefinition)
@@ -38,6 +44,7 @@ class BoardAdmin(AdminSelect2ListFilterMixin, AdminChangeLinksMixin,
                  CustomActionFormMixin, admin.ModelAdmin):
     list_display = ('__str__', 'board_definition_link',
                     'weight_class_link', 'division_link')
+    readonly_fields = ('eligble_users', )
     change_links = ('board_definition', 'division', 'weight_class')
     list_filter = (
         ('board_definition', admin.RelatedOnlyFieldListFilter),
@@ -54,6 +61,10 @@ Then, we will permiate all the possible combinations of those selected fields. F
 you select 2 board definitions, 1 weight class, and 2 divisions, 2x2x1=4 boards will be created.'''
         }
     ]
+
+    def eligble_users(self, obj: 'models.Board'):
+        return ModelChangeListWidget(self.admin_site).render('eligble-users',
+                                                             obj.get_eligble_users())
 
     def get_page_context(self, options: 'CustomAdminPage') -> 'Dict[str, Any]':
         # render_change_form will set opts in the super call, but we need it now
@@ -81,9 +92,16 @@ you select 2 board definitions, 1 weight class, and 2 divisions, 2x2x1=4 boards 
 class WeightClassAdmin(AdminSelect2ListFilterMixin, admin.ModelAdmin):
     list_display = ['__str__', 'gender', 'lower_bound', 'upper_bound']
     list_filter = ['gender', 'lower_bound', 'upper_bound']
+    readonly_fields = ('eligble_users',)
+    fieldsets = (
+        (None, {'fields': ('gender', 'lower_bound', 'upper_bound', 'eligble_users',)}),)
+
+    def eligble_users(self, obj: 'models.WeightClass'):
+        return ModelChangeListWidget(self.admin_site).render('eligble-users',
+                                                             obj.get_eligble_users())
 
 
-@admin.register(models.Score)
+@ admin.register(models.Score)
 class ScoreAdmin(AdminSelect2ListFilterMixin, AdminChangeLinksMixin, admin.ModelAdmin):
     actions = [approve_score]
 

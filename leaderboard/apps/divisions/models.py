@@ -6,12 +6,13 @@ from django.db.models.expressions import F
 from django.db.models.query_utils import Q
 from django.utils.translation import gettext as _
 
-from apps.users.models import Genders
+from apps.users.models import AppUser, Genders
 
 User = get_user_model()
 
 if TYPE_CHECKING:
     from typing import Any
+    from django.db.models.query import QuerySet
 
 
 class WeightClass(models.Model):
@@ -35,6 +36,10 @@ class WeightClass(models.Model):
                 name='unique_weight_class')
         ]
 
+    def get_eligble_users(self) -> 'QuerySet[AppUser]':
+        # TODO handle conditions
+        return AppUser.objects.filter(weight__gte=self.lower_bound, weight__lt=self.upper_bound)
+
 
 class AgeDivision(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -52,6 +57,10 @@ class AgeDivision(models.Model):
             models.UniqueConstraint(
                 fields=['lower_bound', 'upper_bound'], name='unique_age_range')
         ]
+
+    def get_eligble_users(self) -> 'QuerySet[AppUser]':
+        # TODO handle conditions
+        return AppUser.objects.filter(age__gte=self.lower_bound, age__lt=self.upper_bound)
 
 
 class UnitType(models.TextChoices):
@@ -87,6 +96,10 @@ class Board(models.Model):
             UniqueConstraint(
                 fields=['board_definition', 'division', 'weight_class'], name="unique_board")
         ]
+
+    def get_eligble_users(self):
+        # TODO implement
+        return AppUser.objects.all()
 
 
 class Score(models.Model):
