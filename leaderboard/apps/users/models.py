@@ -1,6 +1,4 @@
-from datetime import date
 from typing import TYPE_CHECKING
-from dateutil.relativedelta import relativedelta
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -10,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.users.managers import AppUserManager
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Optional
     from django.db.models.query import QuerySet
     from apps.divisions.models import WeightClass
 
@@ -30,11 +28,9 @@ class AppUser(AbstractUser):
     weight = models.DecimalField(
         max_digits=5, decimal_places=2, null=True, blank=True)
 
-    objects = AppUserManager()
+    age: 'Optional[int]' = None
 
-    @property
-    def age(self):
-        return relativedelta(date.today(), self.birthday).years if self.birthday else None
+    objects = AppUserManager()
 
     @staticmethod
     def __get_bound_query(value: 'Any'):
