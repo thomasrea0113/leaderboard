@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import TYPE_CHECKING
+from typing import Protocol, TYPE_CHECKING
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models import UniqueConstraint
@@ -7,13 +7,21 @@ from django.db.models.expressions import F
 from django.db.models.query_utils import Q
 from django.utils.translation import gettext as _
 
-from apps.users.models import AppUser, Genders
+from apps.users.models import Genders
 
 User = get_user_model()
 
 if TYPE_CHECKING:
     from typing import Any
     from django.db.models.query import QuerySet
+    from apps.users.models import AppUser
+
+if TYPE_CHECKING:
+    # Only defined this when type checking, as it
+    # as there will be metaclass conflicts at runtime
+    class EligbleUsers(models.Model, Protocol):
+        def get_eligble_users(self) -> 'QuerySet[AppUser]':
+            raise NotImplementedError()
 
 
 class BoundModel(models.Model):
@@ -146,7 +154,7 @@ class Board(models.Model):
                 fields=['board_definition', 'division', 'weight_class'], name="unique_board")
         ]
 
-    def get_eligble_users(self):
+    def get_eligble_users(self) -> 'QuerySet[AppUser]':
         # TODO implement
         weight_class: 'WeightClass' = self.weight_class
         division: 'AgeDivision' = self.division

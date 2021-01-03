@@ -62,9 +62,14 @@ you select 2 board definitions, 1 weight class, and 2 divisions, 2x2x1=4 boards 
         }
     ]
 
-    # TODO the query is WAY too slow, about 35 seconds
-    # def eligble_user_count(self, obj: 'models.Board'):
-    #     return obj.get_eligble_users().count()
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related(
+            'board_definition', 'division', 'weight_class')
+
+    # TODO this is too slow to use in a as a list column
+    @staticmethod
+    def eligble_user_count(obj: 'models.Board'):
+        return obj.get_eligble_users().count()
 
     def eligble_users(self, obj: 'models.Board'):
         return ModelChangeListWidget(self.admin_site).render('eligble-users',
