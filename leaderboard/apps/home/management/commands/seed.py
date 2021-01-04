@@ -13,13 +13,19 @@ User = get_user_model()
 
 if TYPE_CHECKING:
     from typing import Any, Optional
+    from django.core.management.base import CommandParser
 
 
 class Command(BaseCommand):
+    def add_arguments(self, parser: 'CommandParser') -> None:
+        parser.add_argument('--fixture', type=str)
+        parser.add_argument('--precreate-boards', action='store_true')
+
     def handle(self, *args: 'Any', **options: 'Any') -> 'Optional[str]':
         manager = cast(UserManager[AbstractBaseUser], User.objects)
 
-        call_command('loaddata', 'usapl')
+        if options['fixture'] is not None:
+            call_command('loaddata', options['fixture'])
 
         try:
             manager.create_superuser(
@@ -33,15 +39,16 @@ class Command(BaseCommand):
         except IntegrityError:
             pass
 
-        frm = AddManyBoardsForm({
-            'board_definitions': BoardDefinition.objects.all(),
-            'divisions': AgeDivision.objects.all(),
-            'weight_classes': WeightClass.objects.all()
-        })
+        if options['precreate_boards']:
+            frm = AddManyBoardsForm({
+                'board_definitions': BoardDefinition.objects.all(),
+                'divisions': AgeDivision.objects.all(),
+                'weight_classes': WeightClass.objects.all()
+            })
 
-        if frm.is_valid():
-            frm.save()
-        else:
-            raise Exception(frm.errors)
+            if frm.is_valid():
+                frm.save()
+            else:
+                raise Exception(frm.errors)
 
         # TODO restriction board creation for teen/junior only weight classes

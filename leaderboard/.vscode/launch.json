@@ -17,7 +17,7 @@
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/manage.py",
-      "args": ["seed_dev"],
+      "args": ["seed_dev", "--fixture", "usapl", "--precreate-boards"],
       "django": true
     }
   ]
