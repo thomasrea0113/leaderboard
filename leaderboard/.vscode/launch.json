@@ -17,7 +17,13 @@
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/manage.py",
-      "args": ["seed_dev", "--fixture", "usapl", "--precreate-boards"],
+      "args": [
+        "seed_dev",
+        "--fixture",
+        "usapl",
+        "--precreate-boards",
+        "--add-scores"
+      ],
       "django": true
     }
   ]

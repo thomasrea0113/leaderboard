@@ -42,6 +42,8 @@ class Command(seed.Command):
         parser.add_argument(
             '--light', action='store_true',
             help="Don't generate nearly as many boards/users/scores")
+        parser.add_argument('--add-scores', action='store_true',
+                            help='precreate some scores for the boards')
 
     def handle(self, *args: 'Any', **options: 'Any') -> 'Optional[str]':
         super().handle(*args, **options)
@@ -106,11 +108,12 @@ class Command(seed.Command):
         users = [v[0] for v in User.objects.all().values_list('id')]
         possible_scores = [round(v*.01, 2) for v in range(5000, 40000)]
 
-        def yield_scores():
-            for score_id in range(1, 1000 if options['light'] else 100000):
-                # explicility set id so that subsequent seeds don't add another 100000 scores
-                yield Score(id=score_id, board_id=random.choice(boards),
-                            user_id=random.choice(users), value=random.choice(possible_scores))
+        if options['add_scores'] and any(boards):
+            def yield_scores():
+                for score_id in range(1, 1000 if options['light'] else 100000):
+                    # explicility set id so that subsequent seeds don't add another 100000 scores
+                    yield Score(id=score_id, board_id=random.choice(boards),
+                                user_id=random.choice(users), value=random.choice(possible_scores))
 
-        Score.objects.bulk_create(
-            yield_scores(), batch_size=10000, ignore_conflicts=True)
+            Score.objects.bulk_create(
+                yield_scores(), batch_size=10000, ignore_conflicts=True)
