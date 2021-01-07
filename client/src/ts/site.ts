@@ -2,9 +2,8 @@ import 'bootstrap';
 import help from './temp';
 import '../scss/site.scss';
 
-// const j2 = 1;
-let l = help();
+import { loadInitialAsync } from './load-initial';
 
-l += ' to';
+loadInitialAsync();
 
 console.log(l);

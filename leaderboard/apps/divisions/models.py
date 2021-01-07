@@ -17,11 +17,8 @@ if TYPE_CHECKING:
     from apps.users.models import AppUser
 
 if TYPE_CHECKING:
-    # Only defined this when type checking, as it
-    # as there will be metaclass conflicts at runtime
-    class EligbleUsers(models.Model, Protocol):
-        def get_eligble_users(self) -> 'QuerySet[AppUser]':
-            raise NotImplementedError()
+    from django.db.models import BaseManager
+    from django.db.models.manager import RelatedManager
 
 
 class BoundModel(models.Model):
@@ -143,6 +140,10 @@ class Board(models.Model):
         AgeDivision, on_delete=models.CASCADE)
     weight_class = models.ForeignKey(
         WeightClass, on_delete=models.CASCADE)
+    featured = models.BooleanField(blank=True, default=False)
+
+    objects: 'BaseManager[Board]'
+    score_set: 'RelatedManager[Score]'
 
     def __str__(self) -> str:
         return (f'{self.board_definition.name} ({self.division}' +
