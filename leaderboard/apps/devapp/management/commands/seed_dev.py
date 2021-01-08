@@ -1,14 +1,11 @@
 
 from typing import TYPE_CHECKING, cast
 from random import Random
-from itertools import product
 from datetime import timedelta, date
 from dateutil.relativedelta import relativedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import UserManager, AbstractBaseUser
-from django.core import management
-from django.core.management.base import CommandParser
 
 from apps.users.models import Genders
 from apps.divisions.models import AgeDivision, Board, Score, WeightClass
@@ -21,6 +18,7 @@ random = Random(1)
 
 if TYPE_CHECKING:
     from typing import Any, Optional
+    from django.core.management.base import CommandParser
 
 
 def date_between(start: 'date', end: 'date'):
@@ -104,8 +102,8 @@ class Command(seed.Command):
                 user.set_password('Password123')
                 user.save()
 
-        boards = [v[0] for v in Board.objects.all().values_list('id')]
-        users = [v[0] for v in User.objects.all().values_list('id')]
+        boards = [v[0] for v in Board.objects.all().values_list('pk')]
+        users = [v[0] for v in User.objects.all().values_list('pk')]
         possible_scores = [round(v*.01, 2) for v in range(5000, 40000)]
 
         if options['add_scores'] and any(boards):
@@ -117,3 +115,8 @@ class Command(seed.Command):
 
             Score.objects.bulk_create(
                 yield_scores(), batch_size=10000, ignore_conflicts=True)
+
+        # add some features
+        if options['precreate_boards']:
+            Board.objects.filter(pk__in=random.choices(
+                boards, k=3)).update(featured=True)

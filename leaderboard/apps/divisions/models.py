@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Protocol, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models import UniqueConstraint
