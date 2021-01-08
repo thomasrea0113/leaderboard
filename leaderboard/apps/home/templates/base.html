@@ -1,0 +1,34 @@
+{% load render_bundle from webpack_loader %}
+{% load urltils %}
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    {% render_bundle 'site' 'css' %}
+    {% block css %}
+    {% endblock css %}
+</head>
+
+<body>
+    <div class="wrapper">
+
+{% block nav %}
+    {% include 'includes/nav.html' %}
+{% endblock nav %}
+
+    <!-- Page Content -->
+    <div id="content">
+        {% include 'includes/nav_toggle.html' %}
+{% block content %}
+   {% if initial_template %}<div data-initial="?{% query handler='initial' %}">{% include initial_template %}</div>{% endif %}
+{% endblock content %}
+    </div>
+
+</div>   
+{% render_bundle 'site' 'js' %}
+{% block js %}
+{% endblock js %}
+</body>
+</html>

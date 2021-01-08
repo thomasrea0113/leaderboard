@@ -1,7 +1,6 @@
 type ElementMap = { [key: string]: HTMLElement[] };
 interface AjaxResponse<T> {
-    status: number;
-    statusText: string;
+    isJson: boolean;
     content: T;
 }
 
@@ -37,7 +36,8 @@ export const loadInitialAsync = async (): Promise<void> => {
             if (onLoad) {
                 const loadFunc = eval(onLoad);
                 loadFunc(data);
-            } else elm.innerHTML = data.content;
+            } else if (!data.isJson) elm.innerHTML = data.content;
+            else throw 'the loaded data was json, but no onLoad method was provided';
         });
     });
 

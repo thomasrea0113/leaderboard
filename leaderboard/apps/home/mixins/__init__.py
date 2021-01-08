@@ -1,17 +1,15 @@
-from typing import TYPE_CHECKING, TypeVar
-import json
-from functools import wraps
-from django.core.serializers import serialize
+from abc import ABCMeta, abstractmethod
+from typing import TYPE_CHECKING
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Model
 from django.db.models.query import QuerySet
-# from django.db.models.query import ValuesQuerySet
 
 from django.http.response import JsonResponse, HttpResponse
 from django.template.response import TemplateResponse
+from django.template.loader import render_to_string
+from django.views.generic.base import TemplateView
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Optional
     from django.http import HttpRequest
     from django.views.generic import View
     _View = View
@@ -39,7 +37,7 @@ class AjaxJsonResponse(JsonResponse):
 
         super().__init__({
             'isJson': isJson,
-            'data': data
+            'content': data
         }, encoder, safe, json_dumps_params, **kwargs)
 
 
@@ -80,3 +78,25 @@ class DynamicHandlerMixin(_View):
                            self.http_method_not_allowed)(request, *args, **kwargs)
 
         return super().dispatch(request, *args, **kwargs)
+
+
+class InitialTemplateView(DynamicHandlerMixin, TemplateView, metaclass=ABCMeta):
+    """A view that will dynamically render a template after initial page load
+    """
+    template_name = 'base.html'
+    initial_template: 'Optional[str]' = None
+
+    def get_initial_context(self, request: 'HttpRequest', **kwargs) -> 'dict[str, Any]':
+        kwargs.setdefault('loaded', True)
+        return kwargs
+
+    def get(self, request: 'HttpRequest', *args: 'Any', **kwargs: 'Any') -> 'HttpResponse':
+        kwargs.setdefault('loaded', False)
+        kwargs.setdefault('initial_template', self.initial_template)
+        return super().get(request, *args, **kwargs)
+
+    def get_initial(self, request: 'HttpRequest', *args, **kwargs):
+        if self.initial_template:
+            return TemplateResponse(request, self.initial_template, self.get_initial_context(request))
+        raise NotImplementedError(
+            'the default implementation of get_initial request that initial_template be set')

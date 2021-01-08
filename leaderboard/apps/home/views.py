@@ -1,18 +1,17 @@
 from typing import TYPE_CHECKING
 from django.db.models.expressions import F
-from django.views.generic import TemplateView
-from apps.home.mixins import AjaxJsonResponse, DynamicHandlerMixin, AjaxMixin
-from apps.divisions.models import AgeDivision, Board, WeightClass
 from apps.home.query import pick
+from apps.divisions.models import AgeDivision, Board, WeightClass
+from apps.home.mixins import AjaxMixin, InitialTemplateView
 
 if TYPE_CHECKING:
     from django.http import HttpRequest
 
 
-class Index(AjaxMixin, DynamicHandlerMixin, TemplateView):
-    template_name = "home/index.html"
+class Index(AjaxMixin, InitialTemplateView):
+    initial_template = "home/includes/index.html"
 
-    def get_initial(self, request: 'HttpRequest', *args, **kwargs):
+    def get_initial_context(self, request: 'HttpRequest', *args, **kwargs):
         boards = Board.objects.filter(featured=True)
 
         def gen(board: 'Board'):
@@ -25,4 +24,4 @@ class Index(AjaxMixin, DynamicHandlerMixin, TemplateView):
 
         data = list(map(gen, boards))
 
-        return AjaxJsonResponse(data, safe=False)
+        return super().get_initial_context(request, data=data)
