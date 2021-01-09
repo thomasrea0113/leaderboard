@@ -1,24 +1,38 @@
-<nav id="sidebar">
-    <div class="sidebar-header">
-        <h3>Leaderboard</h3>
-    </div>
+  <nav class="navbar">
+    <ul class="navbar-nav">
+      <li class="logo">
+        <a href="#" class="nav-link">
+          <span class="link-text logo-text">Fireship</span>
+          {% include 'icons/angle-right-solid.svg' %}
+        </a>
+      </li>
 
-    <ul class="list-unstyled components">
-        <li class="active">
-            <a href="#homeSubmenu"><i class="fa fa-2x fas fa-home"></i>&MediumSpace;&MediumSpace;Home</a>
-        </li>
-        <li>
-            <a href="#"><i class="fa fa-2x fas fa-search"></i>&MediumSpace;&MediumSpace;Browse Boards</a>
-        </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          {% include 'icons/home-solid.svg' %}
+          <span class="link-text">Home</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          {% include 'icons/search-solid.svg' %}
+          <span class="link-text">Browse Boards</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          {% include 'icons/users-solid.svg' %}
+          <span class="link-text">Browse Users</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          {% include 'icons/user-solid.svg' %}
+          <span class="link-text">My Profile</span>
+        </a>
+      </li>
     </ul>
-    <ul class="list-unstyled components">
-        <li>
-            <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-2x fas fa-user-circle"></i>&MediumSpace;&MediumSpace;Pages</a>
-            <ul class="collapse list-unstyled" id="pageSubmenu">
-                <li>
-                    <a href="#">Page 1</a>
-                </li>
-            </ul>
-        </li>
-    </ul>
-</nav>
+  </nav>

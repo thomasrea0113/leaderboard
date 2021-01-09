@@ -1,71 +1,72 @@
 {
-  "folders": [
-    {
-      "path": ".devcontainer"
-    },
-    {
-      "path": "leaderboard"
-    },
-    {
-      "path": "client"
-    }
-  ],
-  "extensions": {
-    "recommendations": [
-      "ms-azuretools.vscode-docker",
-      "redhat.vscode-yaml",
-      "gruntfuggly.todo-tree",
-      "coenraads.bracket-pair-colorizer-2",
-      "mhutchie.git-graph"
-    ]
-  },
-  "settings": {
-    "python.languageServer": "Pylance",
-    "testExplorer.addToEditorContextMenu": true,
-    "sqltools.connections": [
-      {
-        "previewLimit": 50,
-        "server": "db",
-        "port": 5432,
-        "driver": "PostgreSQL",
-        "name": "db",
-        "database": "leaderboard",
-        "username": "postgres",
-        "password": "postgres"
-      }
-    ],
-    "json.format.enable": false,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true,
-    "[python]": {
-      "editor.defaultFormatter": "ms-python.python"
-    },
-    "python.analysis.diagnosticMode": "workspace",
-    "python.analysis.typeCheckingMode": "basic",
-    "prettier.disableLanguages": ["django-html"],
-    "files.associations": {
-      "**/*.html": "html",
-      "**/templates/**/*.html": "django-html",
-      "**/templates/**/*": "django-txt",
-      "**/requirements{/**,*}.{txt,in}": "pip-requirements"
-    },
-    "emmet.includeLanguages": {
-      "django-html": "html"
-    },
-    "python.linting.pycodestyleArgs": [
-      "--max-line-length=100"
-    ],
-    "[sql]": {
-      "editor.defaultFormatter": "mtxr.sqltools"
-    }
-  },
-  "launch": {
-    "version": "0.2.0",
-    "compounds": [
-      {
-        "name": "Compound",
-        "configurations": ["Launch Chrome", "Launch Client", "Launch Python"]
-      }
-    ]
-  }
+        "folders": [
+                {
+                        "path": ".devcontainer"
+                },
+                {
+                        "path": "leaderboard"
+                },
+                {
+                        "path": "client"
+                }
+        ],
+        "extensions": {
+                "recommendations": [
+                        "ms-azuretools.vscode-docker",
+                        "redhat.vscode-yaml",
+                        "gruntfuggly.todo-tree",
+                        "coenraads.bracket-pair-colorizer-2",
+                        "mhutchie.git-graph"
+                ]
+        },
+        "settings": {
+                "python.languageServer": "Pylance",
+                "testExplorer.addToEditorContextMenu": true,
+                "sqltools.connections": [
+                        {
+                                "previewLimit": 50,
+                                "server": "db",
+                                "port": 5432,
+                                "driver": "PostgreSQL",
+                                "name": "db",
+                                "database": "leaderboard",
+                                "username": "postgres",
+                                "password": "postgres"
+                        }
+                ],
+                "json.format.enable": false,
+                "editor.defaultFormatter": "esbenp.prettier-vscode",
+                "editor.formatOnSave": true,
+                "[python]": {
+                        "editor.defaultFormatter": "ms-python.python"
+                },
+                "python.analysis.diagnosticMode": "workspace",
+                "python.analysis.typeCheckingMode": "basic",
+                "files.associations": {
+                        "**/*.html": "html",
+                        "**/templates/**/*.{html,svg}": "django-html",
+                        "**/templates/**/*": "django-txt",
+                        "**/requirements{/**,*}.{txt,in}": "pip-requirements"
+                },
+                "prettier.documentSelectors": ["**/*.svg"],
+                "emmet.includeLanguages": {
+                        "django-html": "html"
+                },
+                "python.linting.pycodestyleArgs": ["--max-line-length=100"],
+                "[sql]": {
+                        "editor.defaultFormatter": "mtxr.sqltools"
+                },
+                "[django-html]": {
+                        "editor.formatOnSave": false
+                }
+        },
+        "launch": {
+                "version": "0.2.0",
+                "compounds": [
+                        {
+                                "name": "Compound",
+                                "configurations": ["Launch Chrome", "Launch Client", "Launch Python"]
+                        }
+                ]
+        }
 }

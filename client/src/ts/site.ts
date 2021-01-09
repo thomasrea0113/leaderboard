@@ -6,5 +6,5 @@ import { loadInitialAsync } from './load-initial';
 loadInitialAsync();
 
 document.getElementById('sidebarCollapse')?.addEventListener('click', () => {
-    document.getElementById('sidebar')?.classList.toggle('active');
+  document.getElementById('sidebar')?.classList.toggle('active');
 });
