@@ -5,6 +5,7 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 const BundleTracker = require('webpack-bundle-tracker');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const PrettierPlugin = require('prettier-webpack-plugin');
 
 const config = {
   entry: {
@@ -53,6 +54,7 @@ const config = {
     new MiniCssExtractPlugin({ filename: '[name].[fullhash].css' }),
     new ESLintPlugin({ extensions: ['ts'] }),
     new BundleTracker({ filename: '../leaderboard/leaderboard/webpack-stats.json' }),
+    new PrettierPlugin({ configFile: '../.prettierrc' }),
   ],
 };
 
