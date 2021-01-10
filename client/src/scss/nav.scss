@@ -25,7 +25,6 @@ main {
   position: fixed;
   background-color: var(--bg-primary);
   transition: width var(--transition-speed) ease;
-  overflow: hidden;
 }
 
 .navbar-nav {
@@ -40,7 +39,6 @@ main {
 
 .nav-item {
   width: 100%;
-  z-index: 0;
 }
 
 .nav-link {
@@ -108,7 +106,6 @@ svg path {
 
 /* Sub navs */
 .nav-item.dropdown {
-  z-index: 1;
   overflow: visible;
 
   &:hover {
