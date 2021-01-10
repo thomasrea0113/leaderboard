@@ -1,8 +1,10 @@
 :root {
   --text-primary: #b6b6b6;
   --text-secondary: #ececec;
+  --text-tertiary: #141418;
   --bg-primary: #23232e;
   --bg-secondary: #141418;
+  --bg-tertiary: #b6b6b6;
   --transition-speed: 600ms;
 }
 
@@ -22,7 +24,7 @@ main {
   padding: unset;
   position: fixed;
   background-color: var(--bg-primary);
-  transition: width 600ms ease;
+  transition: width var(--transition-speed) ease;
   overflow: hidden;
 }
 
@@ -38,6 +40,7 @@ main {
 
 .nav-item {
   width: 100%;
+  z-index: 0;
 }
 
 .nav-link {
@@ -101,6 +104,36 @@ svg path {
 
 .navbar:hover .logo svg {
   transform: rotate(-180deg);
+}
+
+/* Sub navs */
+.nav-item.dropdown {
+  z-index: 1;
+  overflow: visible;
+
+  &:hover {
+    .dropdown-menu {
+      height: 100%;
+      left: 4rem;
+    }
+  }
+
+  & .dropdown-menu {
+    background-color: var(--bg-tertiary);
+    // display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 0;
+    left: 0;
+    overflow: hidden;
+    transition: var(--transition-speed);
+
+    .dropdown-item {
+      @extend .nav-link;
+
+      color: var(--text-tertiary);
+    }
+  }
 }
 
 /* Small screens */
