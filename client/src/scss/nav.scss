@@ -5,7 +5,7 @@
   --bg-primary: #23232e;
   --bg-secondary: #141418;
   --bg-tertiary: #b6b6b6;
-  --transition-speed: 600ms;
+  --transition-speed: 300ms;
 }
 
 body {
@@ -58,8 +58,11 @@ main {
 }
 
 .link-text {
+  position: relative;
+  left: -999;
   white-space: nowrap;
   margin-left: 1rem;
+  transition: var(--transition-speed);
 }
 
 .nav-link svg {
@@ -128,6 +131,10 @@ svg path {
     .dropdown-item {
       @extend .nav-link;
 
+      .link-text {
+        left: 0;
+      }
+
       color: var(--text-tertiary);
     }
   }
@@ -179,7 +186,7 @@ svg path {
   }
 
   .navbar:hover .link-text {
-    display: inline;
+    left: 0;
   }
 
   .navbar:hover .logo svg {
