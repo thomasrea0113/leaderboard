@@ -62,7 +62,7 @@ class CustomActionFormMixin(_Base):
         return options.get('context', {})
 
     def get_form(self, request: 'HttpRequest',
-                 obj: 'Optional[_ModelT]' = ...,
+                 obj=...,
                  change: 'bool' = ..., **kwargs: 'Any'):
         page_options = self.get_page_options(request)
         if page_options:
@@ -73,7 +73,7 @@ class CustomActionFormMixin(_Base):
     # pylint: disable=too-many-arguments
     def render_change_form(self, request: 'HttpRequest', context: 'Dict[str,Any]',
                            add: 'bool' = False, change: 'bool' = False,
-                           form_url: 'str' = '', obj: '_ModelT' = None):
+                           form_url: 'str' = '', obj=None):
         page_options = self.get_page_options(request)
         if page_options:
             help_text = page_options.get('help_text', None)

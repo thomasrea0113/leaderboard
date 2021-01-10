@@ -57,7 +57,7 @@ main {
 }
 
 .link-text {
-  display: none;
+  white-space: nowrap;
   margin-left: 1rem;
 }
 
@@ -67,16 +67,11 @@ main {
   margin: 0 1.5rem;
 }
 
-.fa-primary {
+svg path {
   color: #ff7eee;
 }
 
-.fa-secondary {
-  color: #df49a6;
-}
-
-.fa-primary,
-.fa-secondary {
+svg path {
   transition: var(--transition-speed);
 }
 
@@ -87,7 +82,7 @@ main {
   text-align: center;
   color: var(--text-secondary);
   background: var(--bg-secondary);
-  font-size: 1.5rem;
+  font-size: 1rem;
   letter-spacing: 0.3ch;
   width: 100%;
 }
@@ -133,8 +128,16 @@ main {
   }
 }
 
+#content {
+  margin-left: unset;
+}
+
 /* Large screens */
 @media only screen and (min-width: 600px) {
+  #content {
+    margin-left: 5rem;
+  }
+
   .navbar {
     top: 0;
     width: 5rem;
