@@ -3,21 +3,22 @@
       <li class="logo">
         <a href="#" class="nav-link">
           <span class="link-text logo-text">Leaderboard</span>
-          {% include 'icons/angle-right-solid.svg' %}
+          <div class="logo-icon">{% include 'icons/angle-right-solid.svg' %}</div>
         </a>
       </li>
 
       <li class="nav-item">
         <a href="#" class="nav-link">
-          {% include 'icons/home-solid.svg' %}
+          <div class="link-icon">{% include 'icons/home-solid.svg' %}</div>
           <span class="link-text">Home</span>
         </a>
       </li>
 
       <li class="nav-item dropdown">
         <a href="#" class="nav-link">
-          {% include 'icons/user-solid.svg' %}
+          <div class="link-icon">{% include 'icons/user-solid.svg' %}</div>
           <span class="link-text">My Profile</span>
+          <div class="collapse-icon">{% include 'icons/angle-down-solid.svg' %}</div>
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="#"><span class="link-text">Action</span></a>
@@ -31,14 +32,14 @@
 
       <li class="nav-item">
         <a href="#" class="nav-link">
-          {% include 'icons/search-solid.svg' %}
+          <div class="link-icon">{% include 'icons/search-solid.svg' %}</div>
           <span class="link-text">Browse Boards</span>
         </a>
       </li>
 
       <li class="nav-item">
         <a href="#" class="nav-link">
-          {% include 'icons/users-solid.svg' %}
+          <div class="link-icon">{% include 'icons/users-solid.svg' %}</div>
           <span class="link-text">Browse Users</span>
         </a>
       </li>
