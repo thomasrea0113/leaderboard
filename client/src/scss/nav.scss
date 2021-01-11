@@ -5,7 +5,7 @@
   --bg-primary: #23232e;
   --bg-secondary: #141418;
   --bg-tertiary: #b6b6b6;
-  --transition-speed: 300ms;
+  --transition-speed: 250ms;
 }
 
 body {
@@ -140,6 +140,12 @@ svg path {
 
 .navbar:hover .logo svg {
   transform: rotate(-180deg);
+}
+
+// to be added via javascript to elements that are in the process of transitioning. This
+// is used to prevent unwanted hover transitions
+.transitioning {
+  pointer-events: none;
 }
 
 /* Sub navs */

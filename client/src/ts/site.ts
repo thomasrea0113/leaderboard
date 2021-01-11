@@ -2,9 +2,7 @@ import 'bootstrap';
 import '../scss/site.scss';
 
 import { loadInitialAsync } from './load-initial';
+import { initializeNav } from './nav';
 
 loadInitialAsync();
-
-document.getElementById('sidebarCollapse')?.addEventListener('click', () => {
-  document.getElementById('sidebar')?.classList.toggle('active');
-});
+initializeNav();
