@@ -192,6 +192,10 @@ svg path {
     height: 5rem;
   }
 
+  .link-text {
+    display: none;
+  }
+
   .logo {
     display: none;
   }
@@ -206,6 +210,10 @@ svg path {
 
   main {
     margin: 0;
+  }
+
+  .collapse-icon {
+    display: none;
   }
 }
 
